@@ -1,0 +1,72 @@
+version: '3.2'
+
+
+networks:
+  hadoop_network:
+    external:
+      name: hadoop_network
+
+services:
+  hadoop:
+    container_name: aidream_hadoop_nn0
+    build:
+      context: hadoop/
+    volumes:
+      - type: bind
+        source: ./hadoop/hadoop_config/workers
+        target: /home/hduser/hadoop-3.3.1/etc/hadoop/workers
+      - type: bind
+        source: ./hadoop/hadoop_config/hdfs-site.xml
+        target: /home/hduser/hadoop-3.3.1/etc/hadoop/hdfs-site.xml
+      - type: bind
+        source: ./hadoop/hadoop_config/hadoop-env.sh
+        target: /home/hduser/hadoop-3.3.1/etc/hadoop/hadoop-env.sh
+      - type: bind
+        source: ./hadoop/hadoop_config/yarn-site.xml
+        target: /home/hduser/hadoop-3.3.1/etc/hadoop/yarn-site.xml
+      - type: bind
+        source: ./hadoop/zookeeper_config/myid
+        target: /home/zookeeper/data/myid
+      - type: bind
+        source: ./hadoop/zookeeper_config/zoo.cfg
+        target: /home/zookeeper/zookeeper-3.4.6/conf/zoo.cfg
+      - type: bind
+        source: /etc/localtime
+        target: /etc/localtime
+      - type: bind
+        source: ./hadoop/sshd_config
+        target: /etc/ssh/sshd_config
+      - type: bind
+        source: ./hadoop/startStep1.sh
+        target: /home/startStep1.sh
+      - type: bind
+        source: ./hadoop/startStep2.sh
+        target: /home/startStep2.sh
+      - type: bind
+        source: ./hadoop/startStep3.sh
+        target: /home/startStep3.sh
+      - type: bind
+        source: ./hadoop/startStep4.sh
+        target: /home/startStep4.sh
+        #      - type: volume
+        #  source: hadoop
+        # target: /home
+    working_dir: /home
+    extra_hosts:
+      - "awa-test-nn1:172.19.0.3"
+      - "awa-test-jn0:172.19.0.4"
+      - "awa-test-dn0:172.19.0.5"
+      - "awa-test-dn1:172.19.0.6"
+    hostname: awa-test-nn0
+    ports:
+      - "51970:51070"
+      - "58920:58020"   
+            # - "51070:51070"
+        #- "51022:22"
+    networks:
+      - hadoop_network
+    stdin_open: true
+    tty: true 
+        #    command: ["/home/startSSH.sh"]
+    #volumes:
+        #  hadoop:
